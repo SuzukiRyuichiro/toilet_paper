@@ -1,1 +1,14 @@
-.env*
+# Ignore sensitive config files
+config.py
+secrets.py
+wifi_config.py
+*.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# OS files
+.DS_Store
+Thumbs.db
