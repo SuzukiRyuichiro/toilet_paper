@@ -21,12 +21,12 @@ except ImportError:
 REFRESH_INTERVAL = 30  # seconds
 
 # ============ E-PAPER DRIVER ============
-EPD_WIDTH  = 122
+EPD_WIDTH = 122
 EPD_HEIGHT = 250
 
-RST_PIN  = 12
-DC_PIN   = 8
-CS_PIN   = 9
+RST_PIN = 12
+DC_PIN = 8
+CS_PIN = 9
 BUSY_PIN = 13
 
 
@@ -35,7 +35,7 @@ class EPD_2in13_V4_Landscape(framebuf.FrameBuffer):
         self.reset_pin = Pin(RST_PIN, Pin.OUT)
         self.busy_pin = Pin(BUSY_PIN, Pin.IN, Pin.PULL_UP)
         self.cs_pin = Pin(CS_PIN, Pin.OUT)
-        
+
         if EPD_WIDTH % 8 == 0:
             self.width = EPD_WIDTH
         else:
@@ -159,12 +159,13 @@ class EPD_2in13_V4_Landscape(framebuf.FrameBuffer):
 
 # ============ WIFI & HTTP ============
 
+
 def connect_wifi():
     print("Connecting to WiFi...")
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
     wlan.connect(SSID, PASSWORD)
-    
+
     max_wait = 10
     while max_wait > 0:
         if wlan.status() < 0 or wlan.status() >= 3:
@@ -172,10 +173,10 @@ def connect_wifi():
         max_wait -= 1
         print("Waiting...")
         time.sleep(1)
-    
+
     if wlan.status() != 3:
         raise RuntimeError("WiFi connection failed")
-    
+
     status = wlan.ifconfig()
     print(f"Connected! IP: {status[0]}")
     return wlan
@@ -184,21 +185,21 @@ def connect_wifi():
 def fetch_iss_location():
     """Fetch ISS current location from open-notify API"""
     print("Fetching ISS location...")
-    
+
     try:
         addr_info = socket.getaddrinfo("api.open-notify.org", 80)[0]
     except:
         addr = ("23.253.146.138", 80)
     else:
         addr = addr_info[4]
-    
+
     s = socket.socket()
     s.settimeout(10)
     s.connect(addr)
-    
+
     request = b"GET /iss-now.json HTTP/1.1\r\nHost: api.open-notify.org\r\nConnection: close\r\n\r\n"
     s.send(request)
-    
+
     response = b""
     while True:
         try:
@@ -209,19 +210,19 @@ def fetch_iss_location():
         except:
             break
     s.close()
-    
-    response_str = response.decode('utf-8')
-    
-    if '\r\n\r\n' in response_str:
-        body = response_str.split('\r\n\r\n', 1)[1]
+
+    response_str = response.decode("utf-8")
+
+    if "\r\n\r\n" in response_str:
+        body = response_str.split("\r\n\r\n", 1)[1]
     else:
         body = response_str
-    
+
     data = json.loads(body)
-    
-    if data.get('message') == 'success':
-        iss_data = data['iss_position']
-        return iss_data['latitude'], iss_data['longitude']
+
+    if data.get("message") == "success":
+        iss_data = data["iss_position"]
+        return iss_data["latitude"], iss_data["longitude"]
     else:
         raise RuntimeError("API returned error")
 
@@ -229,29 +230,30 @@ def fetch_iss_location():
 def update_display(epd, lat, lon):
     """Update the e-ink display with ISS location"""
     epd.fill(0xFF)  # White background
-    
+
     # Draw border
     epd.rect(5, 5, 240, 110, 0x00)
-    
+
     # Title
     epd.text("ISS TRACKER", 10, 10, 0x00)
-    
+
     # Show coordinates
     epd.text(f"Lat: {lat}", 15, 35, 0x00)
     epd.text(f"Lon: {lon}", 15, 55, 0x00)
-    
+
     # Timestamp in JST
     epd.text("Updated:", 15, 80, 0x00)
-    t = time.time() + 9 * 3600  # Add 9 hours for JST
+    t = time.time()
     tm = time.localtime(t)
     time_str = "{:02d}:{:02d}:{:02d}".format(tm[3], tm[4], tm[5])
     epd.text(time_str, 15, 95, 0x00)
-    
+
     # Show on display
     epd.display(epd.buffer)
 
 
 # ============ CLEANUP ON EXIT ============
+
 
 def cleanup_display(epd):
     """Clear display and put to sleep on exit"""
@@ -270,23 +272,24 @@ def cleanup_display(epd):
 
 # ============ MAIN ============
 
+
 def main():
     epd = None
-    
+
     try:
         # Connect to WiFi
         connect_wifi()
-        
+
         # Initialize display
         print("Initializing display...")
         epd = EPD_2in13_V4_Landscape()
         epd.Clear()
-        
+
         # Main loop - refresh every 30 seconds
         refresh_count = 0
         while True:
             print(f"\n=== Refresh #{refresh_count + 1} ===")
-            
+
             # Fetch ISS location
             try:
                 lat, lon = fetch_iss_location()
@@ -294,15 +297,15 @@ def main():
             except Exception as e:
                 print(f"Error fetching data: {e}")
                 lat, lon = "Error", "Error"
-            
+
             # Update display
             print("Updating display...")
             update_display(epd, lat, lon)
-            
+
             refresh_count += 1
             print(f"Waiting {REFRESH_INTERVAL} seconds...")
             time.sleep(REFRESH_INTERVAL)
-    
+
     except KeyboardInterrupt:
         print("\nStopped by user (Ctrl+C)")
     except Exception as e:
