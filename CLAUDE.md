@@ -37,9 +37,22 @@ wrangler log
 
 # Check Worker secret values
 wrangler secret list
+
+# Convert Misaki font data to TypeScript (from repo root)
+python3 convert_font.py
 ```
 
 No build step for Pico code — files are uploaded directly to the device via Thonny or `ampy`.
+
+## Worker Directory
+
+`worker/` — Cloudflare Worker project (TypeScript)
+- `src/index.ts` — HTTP handler (`GET /` returns 3 concatenated bitmaps)
+- `src/renderer.ts` — 1-bit bitmap renderer (250×122 MONO_HLSB, Misaki 8×8 font)
+- `src/font-misaki.ts` — Auto-generated Misaki font data (~12KB, 1710 glyphs × 7 bytes)
+- `wrangler.toml` — KV binding (`CACHE`), env vars
+
+If KV `CACHE` binding ID is not set in `wrangler.toml`, the Worker still works in Phase 1 (KV reads are stubbed). Run `wrangler kv:namespace create CACHE` to create it.
 
 ## Known Bugs
 
