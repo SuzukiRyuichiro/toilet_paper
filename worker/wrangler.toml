@@ -7,7 +7,7 @@ enabled = true
 
 [[kv_namespaces]]
 binding = "CACHE"
-id = "your-kv-namespace-id"
+id = "31ca3f12141048929c5c052419576ec9"
 
 [vars]
-WORKER_URL = "https://epd-display.example.workers.dev"
+WORKER_URL = "https://epd-display.dragon-aka-scooter.workers.dev"
