@@ -1,0 +1,13 @@
+name = "epd-display"
+main = "src/index.ts"
+compatibility_date = "2025-04-18"
+
+[observability]
+enabled = true
+
+[[kv_namespaces]]
+binding = "CACHE"
+id = "your-kv-namespace-id"
+
+[vars]
+WORKER_URL = "https://epd-display.example.workers.dev"
