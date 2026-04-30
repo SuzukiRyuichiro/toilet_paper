@@ -27,10 +27,9 @@
 # THE SOFTWARE.
 #
 
-from machine import Pin, SPI
 import framebuf
 import utime
-
+from machine import SPI, Pin
 
 EPD_WIDTH = 122
 EPD_HEIGHT = 250
