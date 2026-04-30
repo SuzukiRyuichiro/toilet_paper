@@ -31,7 +31,7 @@ for index, item in enumerate(wether_data):
             32,
             framebuf.MONO_HMSB,
         ),
-        10,
+        4,
         10 + 40 * index,
     )
 
@@ -46,9 +46,9 @@ for index, item in enumerate(wether_data):
     weekdays = ["月", "火", "水", "木", "金", "土", "日"]
     weekday_zen = weekdays[tm[6]]
     date_str = (
-        f"{month_zen}月{day_zen}日（{weekday_zen}） {item['weather']['description']}"
+        f"{month_zen}／{day_zen} ({weekday_zen}) {item['weather']['description']}"
     )
-    draw_japanese_text(epd, date_str, 52, 12 + 40 * index)
+    draw_japanese_text(epd, date_str, 40, 12 + 40 * index, size=16)
 
     # 3. 温度と降水量の描画
     max_temp_zen = "".join(
@@ -60,8 +60,9 @@ for index, item in enumerate(wether_data):
     rain_zen = "".join(
         ["０１２３４５６７８９"[int(c)] for c in str(int(item["precipitation_sum"]))]
     )
-    temp_str = f"最高{max_temp_zen}℃　最低{min_temp_zen}℃　{rain_zen} ｍｍ"
-    draw_japanese_text(epd, temp_str, 52, 28 + 40 * index)
+    temp_str = f"高{max_temp_zen}℃　低{min_temp_zen}℃　{rain_zen}ﾐﾘ"
+    draw_japanese_text(epd, temp_str, 40, 28 + 40 * index, size=16)
+
 
 epd.display(epd.buffer)
 epd.delay_ms(30000)
