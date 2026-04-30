@@ -58,12 +58,12 @@ for index, item in enumerate(wether_data):
         ["０１２３４５６７８９"[int(c)] for c in str(int(item["temperature_2m_min"]))]
     )
     rain_zen = "".join(
-        ["０１２３４５６７８９"[int(c)] for c in str(int(item["rain_sum"]))]
+        ["０１２３４５６７８９"[int(c)] for c in str(int(item["precipitation_sum"]))]
     )
     temp_str = f"最高{max_temp_zen}℃　最低{min_temp_zen}℃　{rain_zen} ｍｍ"
     draw_japanese_text(epd, temp_str, 52, 28 + 40 * index)
 
 epd.display(epd.buffer)
-epd.delay_ms(20000)
+epd.delay_ms(30000)
 
 epd.Clear()

@@ -13,8 +13,7 @@ export const getWeatherInChiyoda = async () => {
       "weather_code",
       "temperature_2m_max",
       "temperature_2m_min",
-      "rain_sum",
-      "showers_sum",
+      "precipitation_sum",
     ],
     past_days: 0,
     forecast_days: 3,
@@ -52,7 +51,9 @@ export const getWeatherInChiyoda = async () => {
     temperature_2m_min: [...daily.variables(2)!.valuesArray()].map(
       fixToOneDecimal,
     ),
-    rain_sum: [...daily.variables(3)!.valuesArray()].map(fixToOneDecimal),
+    precipitation_sum: [...daily.variables(3)!.valuesArray()].map(
+      fixToOneDecimal,
+    ),
   };
 
   // Reshape into an array of day objects with Japanese descriptions and icon bytearrays
@@ -68,7 +69,7 @@ export const getWeatherInChiyoda = async () => {
       },
       temperature_2m_min: dailyData.temperature_2m_min[i],
       temperature_2m_max: dailyData.temperature_2m_max[i],
-      rain_sum: dailyData.rain_sum[i],
+      precipitation_sum: dailyData.precipitation_sum[i],
     };
   });
 
