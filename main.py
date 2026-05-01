@@ -62,6 +62,8 @@ for index, item in enumerate(wether_data):
     )
     temp_str = f"高{max_temp_zen}℃　低{min_temp_zen}℃　{rain_zen}ﾐﾘ"
     draw_japanese_text(epd, temp_str, 40, 28 + 40 * index, size=16)
+    if index != 2:
+        epd.hline(0, 46 + 40 * index, 250, 0x00)
 
 
 epd.display(epd.buffer)
